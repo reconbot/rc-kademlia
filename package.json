@@ -1,0 +1,43 @@
+{
+  "name": "rc-kademlia",
+  "version": "3.4.0",
+  "description": "A DHT for my time at recurse center",
+  "main": "dist",
+  "types": "dist/index.d.ts",
+  "repository": "git@github.com:reconbot/rc-kademlia.git",
+  "homepage": "https://github.com/reconbot/rc-kademlia",
+  "runkitExampleFilename": "example.js",
+  "scripts": {
+    "repl": "npm run build && node bin/repl",
+    "start": "npm run build && node bin/start",
+    "test": "npm run unit-test && npm run lint",
+    "unit-test": "mocha --opts lib/mocha.opts",
+    "lint": "tsc && tslint lib/*.ts",
+    "format": "tslint lib/*.ts --fix",
+    "build": "tsc -p tsconfig-build.json",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "kademlia",
+    "dht"
+  ],
+  "author": "Francis Gulotta <wizard@roborooter.com>",
+  "license": "MIT",
+  "dependencies": {
+    "debug": "^4.1.1"
+  },
+  "devDependencies": {
+    "@types/mocha": "^5.2.5",
+    "@types/node": "^10.12.4",
+    "mocha": "^5.2.0",
+    "prettier": "^1.15.2",
+    "ts-node": "^7.0.1",
+    "tslint": "^5.11.0",
+    "tslint-config-prettier": "^1.16.0",
+    "tslint-plugin-prettier": "^2.0.1",
+    "typescript": "^3.1.6"
+  },
+  "engines": {
+    "node": ">=10"
+  }
+}

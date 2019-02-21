@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "noEmit": true,
+    "allowJs": false,
+    "target": "es2017",
+    "moduleResolution": "node",
+    "module": "commonjs",
+    "noImplicitAny": false,
+    "strictNullChecks": true,
+    "declaration": true,
+    "lib": [
+      "es2017",
+      "esnext.asynciterable"
+    ],
+  },
+  "include": [
+    "lib/*",
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

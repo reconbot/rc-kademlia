@@ -1,0 +1,20 @@
+version: '2'
+services:
+  node1:
+    build: .
+    network_mode: "bridge"
+  node2:
+    build: .
+    network_mode: "bridge"
+  node3:
+    build: .
+    network_mode: "bridge"
+  node4:
+    build: .
+    network_mode: "bridge"
+  node5:
+    build: .
+    network_mode: "bridge"
+  node6:
+    build: .
+    network_mode: "bridge"
