@@ -8,3 +8,5 @@ tsconfig.json
 tslint.json
 bin
 presentations
+Dockerfile
+docker-compose.yml

@@ -1,7 +1,7 @@
 {
-  "name": "rc-kademlia",
+  "name": "rc-chat",
   "version": "0.0.1",
-  "description": "A DHT for my time at recurse center",
+  "description": "A DHT chat for my time at recurse center",
   "main": "dist",
   "bin": "dist/chat",
   "types": "dist/index.d.ts",
