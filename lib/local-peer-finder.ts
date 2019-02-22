@@ -34,7 +34,7 @@ export class LocalPeerFinder {
         resolve(peer)
       }
       const timeoutObj = setTimeout(() => {
-        this.events.off('peer', onPeer)
+        this.events.removeListener('peer', onPeer)
         resolve(null)
       }, timeout)
       this.events.once('peer', onPeer)

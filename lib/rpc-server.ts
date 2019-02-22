@@ -39,13 +39,13 @@ export class RPCServer {
       const handler = ({ message }: { message: FindNodeResponse }) => {
         if (peer.id.equals(message.id) && findId.equals(message.findId)) {
           clearTimeout(timer)
-          this.messages.off('findNodeResponse', handler)
+          this.messages.removeListener('findNodeResponse', handler)
           this.logger('waitForFindNodeResponse received', shortId(peer))
           resolve(message.peers)
         }
       }
       const timer = setTimeout(() => {
-        this.messages.off('findNodeResponse', handler)
+        this.messages.removeListener('findNodeResponse', handler)
         this.logger('waitForFindNodeResponse Timeout', shortId(peer))
         reject(new Error(`waitForFindNodeResponse: timeout id:${shortId(peer)}`))
       }, timeout)
@@ -72,13 +72,13 @@ export class RPCServer {
       const handler = ({ message }: { message: Pong }) => {
         if (id.equals(message.id) && nonce.equals(message.nonce)) {
           clearTimeout(timer)
-          this.messages.off('pong', handler)
+          this.messages.removeListener('pong', handler)
           this.logger('waitForPong received', shortId(id))
           resolve(message)
         }
       }
       const timer = setTimeout(() => {
-        this.messages.off('pong', handler)
+        this.messages.removeListener('pong', handler)
         this.logger('waitForPong Timeout', shortId(id))
         reject(new Error(`timeout: id:${id.toString('hex')}`))
       }, timeout)
