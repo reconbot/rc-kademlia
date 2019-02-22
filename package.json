@@ -24,7 +24,9 @@
   "author": "Francis Gulotta <wizard@roborooter.com>",
   "license": "MIT",
   "dependencies": {
-    "debug": "^4.1.1"
+    "debug": "^4.1.1",
+    "streaming-iterables": "^3.5.0",
+    "xor-distance": "^2.0.0"
   },
   "devDependencies": {
     "@types/mocha": "^5.2.5",

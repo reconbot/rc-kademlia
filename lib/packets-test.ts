@@ -1,5 +1,5 @@
 import { deepEqual, ok, equal } from 'assert'
-import { decodePacket, localPeerResponse, localPeerRequest, ping, Ping, pong } from './packets'
+import { decodePacket, localPeerResponse, localPeerRequest, ping, pong, findNode, findNodeResponse } from './packets'
 import { makeId } from './util'
 import { randomBytes } from 'crypto'
 
@@ -20,12 +20,9 @@ describe('packets', () => {
   })
   describe('ping', () => {
     it('encodes/decodes', () => {
-      const message = { id: makeId() }
+      const message = { id: makeId(), nonce: randomBytes(20) }
       const packet = ping.encode(message)
-      const { type, id, nonce } = decodePacket(packet) as Ping
-      deepEqual({ type, id }, { ...message, type: 'ping' })
-      ok(Buffer.isBuffer(nonce))
-      equal(nonce.length, 20)
+      deepEqual(decodePacket(packet), { ...message, type: 'ping' })
     })
   })
   describe('pong', () => {
@@ -33,6 +30,27 @@ describe('packets', () => {
       const message = { id: makeId(), nonce: randomBytes(20) }
       const packet = pong.encode(message)
       deepEqual(decodePacket(packet), { ...message, type: 'pong' })
+    })
+  })
+  describe('findNode', () => {
+    it('encodes/decodes', () => {
+      const message = { id: makeId(), findId: makeId() }
+      const packet = findNode.encode(message)
+      deepEqual(decodePacket(packet), { ...message, type: 'findNode' })
+    })
+  })
+  describe('findNodeResponse', () => {
+    it('encodes/decodes', () => {
+      const message = {
+        id: makeId(),
+        findId: makeId(),
+        peers: [
+          { id: makeId(), address: '123.123.123.432', port: 555 },
+          { id: makeId(), address: '123.123.123.432', port: 583 },
+        ],
+      }
+      const packet = findNodeResponse.encode(message)
+      deepEqual(decodePacket(packet), { ...message, type: 'findNodeResponse' })
     })
   })
 })

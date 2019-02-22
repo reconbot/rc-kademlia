@@ -11,9 +11,9 @@ npm install rc-kademlia
 ```
 
 ## Development
-To build and run 5 servers type
+To build and run 10 nodes type
 ```
-docker-compose up --build
+docker-compose up --build --scale node=10
 ```
 
 ## Example
@@ -24,16 +24,16 @@ docker-compose up --build
 
 ## API
 
-- [`batch()`](#batch)
+- [`tk()`](#tk)
 
 
-### batch
+### tk
 ```ts
-function batch<T>(size: number, iterable: AsyncIterable<T>): AsyncIterableIterator<T[]>
-function batch<T>(size: number, iterable: Iterable<T>): IterableIterator<T[]>
+function tk<T>(size: number, iterable: AsyncIterable<T>): AsyncIterableIterator<T[]>
+function tk<T>(size: number, iterable: Iterable<T>): IterableIterator<T[]>
 ```
 
-Batch objects from `iterable` into arrays of `size` length. The final array may be shorter than size if there is not enough items. Returns a sync iterator if the `iterable` is sync, otherwise an async iterator. Errors from the source `iterable` are immediately raised.
+TK means "to come" in editing parlance. This isn't a real function - the api is TK
 
 `size` can be betweeen 1 and `Infinity`.
 
@@ -50,3 +50,22 @@ for await (const pokemons of batch(10, getPokemon())) {
 ## Contributors wanted!
 
 Writing docs and code is a lot of work! Thank you in advance for helping out.
+
+## TODO
+Tomorrow I want to get
+- [x] limit local peer discovery to one node
+- [x] `find_node` request and response flow
+- [x] the recursive `find_node` search
+- [x] actual good `find_node` results
+- A better way of visualizing what's going on
+- [x] dht bootstrapping process (does this need a real address book with actual k-buckets? Maybe)
+
+Thing I probably won't do tomorrow
+- peer state and removal
+  - responses should count as a pong
+- `store` and `find_value`
+- a real k-bucket address book
+
+Things I'll probably have to do but don't want to
+- test with many more peers
+- visualize what's going on with many more peers

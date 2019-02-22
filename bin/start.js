@@ -7,7 +7,7 @@ const { connect } = require('../dist')
 console.log('starting DHT')
 async function run() {
   const a = await connect()
-  a.pingPeers()
+  // a.pingPeers()
 }
 
 run().catch(err => {
