@@ -1,4 +1,4 @@
-import debug from 'debug'
+import debug, { Debug, Debugger } from 'debug'
 import { pipeline, flatTransform, map, consume, take, transform, collect } from 'streaming-iterables'
 import { Socket, RemoteInfo } from 'dgram'
 import { PeerInfo } from './types'
@@ -12,7 +12,8 @@ export class DHT {
   public readonly id: Buffer
   public readonly rpcServer: RPCServer
   public readonly addressBook: BufferMap<PeerInfo>
-  public readonly logger: (...args: any[]) => void
+  public readonly logger: Debugger
+  public readonly bootStrapped: Promise<void>
   private readonly peerFinder: LocalPeerFinder
 
   constructor({ socket, id = makeId(), peers }: { socket: Socket; id?: Buffer; peers: PeerInfo[] }) {
@@ -25,7 +26,7 @@ export class DHT {
     this.peerFinder = new LocalPeerFinder({ port, id })
     this.respondToPings()
     this.respondToNodeLookups()
-    this.bootStrap()
+    this.bootStrapped = this.bootStrap()
   }
 
   public async findOneLocalPeer() {
@@ -43,10 +44,15 @@ export class DHT {
     if (alreadyFoundPeer) {
       return alreadyFoundPeer
     }
+    if (id.equals(this.id)) {
+      const { address, port } = this.rpcServer.socket.address() as AddressInfo
+      return { id, address, port }
+    }
 
     const queriedPeers = new BufferSet()
     queriedPeers.add(this.id)
     const peersToAsk = this.closestPeers(id)
+    this.logger(`findPeer checking ${peersToAsk.length} nodes for ${shortId(id)}`)
 
     function* shiftNextPeer() {
       while (peersToAsk.length > 0) {
@@ -62,15 +68,19 @@ export class DHT {
       queriedPeers.add(peerToAsk.id)
       try {
         const peers = await this.rpcServer.findNode(peerToAsk, id)
-        for (const foundPeer of peers) {
-          if (queriedPeers.has(foundPeer.id)) {
+        let foundPeer
+        for (const returnedPeer of peers) {
+          if (queriedPeers.has(returnedPeer.id)) {
             continue
           }
-          this.addPeer(foundPeer)
-          if (id.equals(foundPeer.id)) {
-            return foundPeer
+          this.addPeer(returnedPeer)
+          peersToAsk.push(returnedPeer)
+          if (id.equals(returnedPeer.id)) {
+            foundPeer = returnedPeer
           }
-          peersToAsk.push(foundPeer)
+        }
+        if (foundPeer) {
+          return foundPeer
         }
         peersToAsk.sort(sortPeersByDistanceTo(id))
         peersToAsk.splice(20)
@@ -119,15 +129,13 @@ export class DHT {
 
   private async bootStrap() {
     this.logger('bootStrap: Starting')
-    const firstPeer = await this.ensureOnePeer()
-    const results = await this.rpcServer.findNode(firstPeer, this.id)
-    await pipeline(
-      () => results,
-      flatTransform<PeerInfo, PeerInfo>(Infinity, peer => this.ping(peer).then(() => peer, err => null)),
-      map<PeerInfo, void>(peer => this.addPeer(peer)),
-      consume
-    )
+    await this.discoverOneLocalPeer(3)
+    await this.findPeer(this.id)
+    this.logger('probingAddressSpace!')
+    const namespace = debug.disable()
     await this.probeAddressSpace()
+    debug.enable(namespace)
+    this.logger('probingAddressSpace! finished')
     this.logger('bootStrap: Finished', { peers: this.addressBook.size })
   }
 
@@ -143,14 +151,16 @@ export class DHT {
     }
   }
 
-  private async ensureOnePeer() {
-    while (this.addressBook.size === 0) {
+  private async discoverOneLocalPeer(limit = Infinity): Promise<PeerInfo | null> {
+    let attempts = 0
+    while (this.addressBook.size === 0 && attempts < limit) {
       const peer = await this.findOneLocalPeer()
       if (!peer) {
         await delay(1000)
       }
+      attempts++
     }
-    return this.addressBook.values().next().value
+    return this.addressBook.values().next().value || null
   }
 
   // todo double check this order

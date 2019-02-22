@@ -1,6 +1,6 @@
 import debug from 'debug'
 import { PeerInfo } from './types'
-import { ping, decodePacket, Pong, pong, findNode, FindNodeResponse, findNodeResponse } from './packets'
+import { ping, decodePacket, Pong, pong, findNode, FindNodeResponse, findNodeResponse, chatMessage } from './packets'
 import { Socket, RemoteInfo } from 'dgram'
 import { EventEmitter } from 'events'
 import { shortId } from './util'
@@ -17,6 +17,10 @@ export class RPCServer {
     this.messages = new EventEmitter()
     this.handleMessages()
     this.logger = debug(`rck:RPC:${shortId(this.id)}`)
+  }
+
+  public sendChat(peer: PeerInfo, message: string) {
+    this.socket.send(chatMessage.encode({ id: this.id, message }), peer.port, peer.address)
   }
 
   public stop() {

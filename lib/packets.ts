@@ -11,7 +11,7 @@ interface PacketBase {
   type: string
 }
 
-type KnownPackets = LocalPeerRequest | LocalPeerResponse | Ping | Pong | FindNode | FindNodeResponse
+type KnownPackets = LocalPeerRequest | LocalPeerResponse | Ping | Pong | FindNode | FindNodeResponse | ChatMessage
 type KnownPacketNames = KnownPackets['type']
 
 interface PacketInfo {
@@ -210,8 +210,31 @@ export const findNodeResponse = {
   },
 }
 
-const knownPacketsArr = [localPeerRequest, localPeerResponse, ping, pong, findNode, findNodeResponse]
-const knownPacketHash = { localPeerRequest, localPeerResponse, ping, pong, findNode, findNodeResponse }
+export interface ChatMessage {
+  type: 'chatMessage'
+  id: Buffer
+  message: string
+}
+
+export const chatMessage = {
+  name: 'chatMessage',
+  header: Buffer.from([0, 6]),
+  encode({ id, message }: PacketInput<ChatMessage>): Buffer {
+    const messageBuffer = Buffer.from(message)
+    return Buffer.concat([this.header, id, messageBuffer])
+  },
+  decode(data: Buffer): ChatMessage | null {
+    if (!data.slice(0, 2).equals(this.header)) {
+      return null
+    }
+    const id = data.slice(HEADER_LENGTH, HEADER_LENGTH + 20)
+    const message = data.slice(HEADER_LENGTH + 20).toString()
+    return { id, message, type: 'chatMessage' }
+  },
+}
+
+const knownPacketsArr = [localPeerRequest, localPeerResponse, ping, pong, findNode, findNodeResponse, chatMessage]
+const knownPacketHash = { localPeerRequest, localPeerResponse, ping, pong, findNode, findNodeResponse, chatMessage }
 const headerMap = new Map<string, PacketInfo>()
 knownPacketsArr.forEach(info => {
   if (info.header.length !== HEADER_LENGTH) {

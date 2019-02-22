@@ -1,5 +1,14 @@
 import { deepEqual, ok, equal } from 'assert'
-import { decodePacket, localPeerResponse, localPeerRequest, ping, pong, findNode, findNodeResponse } from './packets'
+import {
+  decodePacket,
+  localPeerResponse,
+  localPeerRequest,
+  ping,
+  pong,
+  findNode,
+  findNodeResponse,
+  chatMessage,
+} from './packets'
 import { makeId } from './util'
 import { randomBytes } from 'crypto'
 
@@ -51,6 +60,16 @@ describe('packets', () => {
       }
       const packet = findNodeResponse.encode(message)
       deepEqual(decodePacket(packet), { ...message, type: 'findNodeResponse' })
+    })
+  })
+  describe('chatMessage', () => {
+    it('encodes/decodes', () => {
+      const message = {
+        id: makeId(),
+        message: 'hi!',
+      }
+      const packet = chatMessage.encode(message)
+      deepEqual(decodePacket(packet), { ...message, type: 'chatMessage' })
     })
   })
 })

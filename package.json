@@ -1,21 +1,23 @@
 {
   "name": "rc-kademlia",
-  "version": "3.4.0",
+  "version": "0.0.1",
   "description": "A DHT for my time at recurse center",
   "main": "dist",
+  "bin": "dist/chat",
   "types": "dist/index.d.ts",
   "repository": "git@github.com:reconbot/rc-kademlia.git",
   "homepage": "https://github.com/reconbot/rc-kademlia",
   "runkitExampleFilename": "example.js",
   "scripts": {
+    "build": "tsc -p tsconfig-build.json",
+    "chat": "npm run build && node dist/chat",
+    "format": "tslint lib/*.ts --fix",
+    "lint": "tsc && tslint lib/*.ts",
+    "prepare": "npm run build",
     "repl": "npm run build && node bin/repl",
     "start": "npm run build && node bin/start",
     "test": "npm run unit-test && npm run lint",
-    "unit-test": "mocha --opts lib/mocha.opts",
-    "lint": "tsc && tslint lib/*.ts",
-    "format": "tslint lib/*.ts --fix",
-    "build": "tsc -p tsconfig-build.json",
-    "prepare": "npm run build"
+    "unit-test": "mocha --opts lib/mocha.opts"
   },
   "keywords": [
     "kademlia",
@@ -24,13 +26,17 @@
   "author": "Francis Gulotta <wizard@roborooter.com>",
   "license": "MIT",
   "dependencies": {
+    "chalk": "^2.4.2",
     "debug": "^4.1.1",
+    "promptly": "^3.0.3",
     "streaming-iterables": "^3.5.0",
     "xor-distance": "^2.0.0"
   },
   "devDependencies": {
+    "@types/debug": "^4.1.2",
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.12.4",
+    "@types/promptly": "^1.1.28",
     "mocha": "^5.2.0",
     "prettier": "^1.15.2",
     "ts-node": "^7.0.1",
