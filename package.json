@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "A DHT chat for my time at recurse center",
   "main": "dist",
-  "bin": "dist/chat",
+  "bin": "dist/chat.js",
   "types": "dist/index.d.ts",
   "repository": "git@github.com:reconbot/rc-kademlia.git",
   "homepage": "https://github.com/reconbot/rc-kademlia",
