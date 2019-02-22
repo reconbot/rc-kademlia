@@ -57,15 +57,20 @@ Tomorrow I want to get
 - [x] `find_node` request and response flow
 - [x] the recursive `find_node` search
 - [x] actual good `find_node` results
-- A better way of visualizing what's going on
 - [x] dht bootstrapping process (does this need a real address book with actual k-buckets? Maybe)
+- A better way of visualizing what's going on
 
-Thing I probably won't do tomorrow
-- peer state and removal
+Thing I probably won't do
+- [ ] peer state and removal
   - responses should count as a pong
-- `store` and `find_value`
-- a real k-bucket address book
+- [ ] `store` and `find_value`
+- [ ] a real k-bucket address book
 
 Things I'll probably have to do but don't want to
 - test with many more peers
 - visualize what's going on with many more peers
+
+## References
+- https://pdos.csail.mit.edu/~petar/papers/maymounkov-kademlia-lncs.pdf
+- https://www.roborooter.com/post/kademlia-study
+- https://stackoverflow.com/questions/19329682/adding-new-nodes-to-kademlia-building-kademlia-routing-tables
